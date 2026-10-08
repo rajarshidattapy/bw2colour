@@ -1,880 +1,1195 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Old Photo Restoration & Colorization</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-            background: linear-gradient(135deg, #0066cc 0%, #004c99 100%);
-            min-height: 100vh;
-            padding: 0;
-        }
-
-        /* Navigation */
-        nav {
-            background: rgba(255, 255, 255, 0.98);
-            padding: 20px 60px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 1.5em;
-            font-weight: 700;
-            color: #0066cc;
-        }
-
-        .logo-icon {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, #0066cc, #00ccff);
-            border-radius: 8px;
-        }
-
-        nav button {
-            background: #c6ff00;
-            color: #003366;
-            padding: 12px 28px;
-            border: none;
-            border-radius: 25px;
-            font-weight: 600;
-            font-size: 0.95em;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        nav button:hover {
-            background: #b3e600;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(198, 255, 0, 0.3);
-        }
-
-        /* Hero Section */
-        .hero-section {
-            padding: 80px 60px 60px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 60px;
-            align-items: center;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .hero-content h1 {
-            color: white;
-            font-size: 4em;
-            font-weight: 700;
-            line-height: 1.1;
-            margin-bottom: 20px;
-            letter-spacing: -1px;
-        }
-
-        .hero-content h1 .highlight {
-            background: linear-gradient(135deg, #c6ff00, #00ff88);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .hero-content p {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 1.2em;
-            line-height: 1.6;
-            margin-bottom: 35px;
-            max-width: 500px;
-        }
-
-        .cta-button {
-            background: #c6ff00;
-            color: #003366;
-            padding: 18px 40px;
-            border: none;
-            border-radius: 30px;
-            font-weight: 700;
-            font-size: 1.1em;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .cta-button:hover {
-            background: #b3e600;
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(198, 255, 0, 0.4);
-        }
-
-        .cta-button::after {
-            content: '→';
-            font-size: 1.3em;
-        }
-
-        .rating {
-            margin-top: 30px;
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        .stars {
-            color: #ffd700;
-            font-size: 1.2em;
-            margin-bottom: 8px;
-        }
-
-        /* Feature Cards */
-        .feature-cards {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-        }
-
-        .feature-card {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-        }
-
-        .feature-card.dark {
-            background: #1a1a1a;
-            color: white;
-        }
-
-        .feature-card.accent {
-            background: linear-gradient(135deg, #c6ff00, #00ff88);
-        }
-
-        .feature-card h3 {
-            font-size: 1.3em;
-            margin-bottom: 15px;
-            color: #0066cc;
-        }
-
-        .feature-card.dark h3,
-        .feature-card.accent h3 {
-            color: #1a1a1a;
-        }
-
-        .feature-card .metric {
-            font-size: 2.5em;
-            font-weight: 700;
-            margin: 15px 0;
-        }
-
-        .feature-card .description {
-            font-size: 0.95em;
-            opacity: 0.8;
-            line-height: 1.5;
-        }
-
-        /* Main Container */
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 30px 30px 0 0;
-            box-shadow: 0 -10px 60px rgba(0, 0, 0, 0.2);
-            padding: 60px;
-            margin-top: 40px;
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 50px;
-        }
-
-        .section-header h2 {
-            font-size: 2.5em;
-            color: #1a1a1a;
-            margin-bottom: 15px;
-            font-weight: 700;
-        }
-
-        .section-header .highlight-text {
-            color: #0066cc;
-        }
-
-        .section-header .accent-dot {
-            color: #c6ff00;
-        }
-
-        .section-header p {
-            color: #666;
-            font-size: 1.1em;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .upload-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 50px;
-        }
-
-        .upload-box {
-            border: 2px dashed #d0d0d0;
-            border-radius: 20px;
-            padding: 40px;
-            text-align: center;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            background: #fafafa;
-            position: relative;
-        }
-
-        .upload-box:hover {
-            border-color: #0066cc;
-            background: white;
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 102, 204, 0.1);
-        }
-
-        .upload-box.has-file {
-            border-color: #c6ff00;
-            background: white;
-            box-shadow: 0 10px 30px rgba(198, 255, 0, 0.1);
-        }
-
-        .upload-box h3 {
-            color: #1a1a1a;
-            margin-bottom: 12px;
-            font-size: 1.4em;
-            font-weight: 700;
-        }
-
-        .upload-box p {
-            color: #666;
-            margin-bottom: 25px;
-            font-size: 1em;
-        }
-
-        .file-input {
-            display: none;
-        }
-
-        .upload-btn {
-            background: #0066cc;
-            color: white;
-            padding: 14px 35px;
-            border: none;
-            border-radius: 30px;
-            font-size: 1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-block;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .upload-btn:hover {
-            background: #0052a3;
-            transform: scale(1.05);
-            box-shadow: 0 8px 20px rgba(0, 102, 204, 0.3);
-        }
-
-        .file-name {
-            margin-top: 20px;
-            font-size: 1em;
-            color: #00a651;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .file-name::before {
-            content: '✓';
-            background: #00a651;
-            color: white;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8em;
-        }
-
-        .preview-img {
-            max-width: 100%;
-            max-height: 220px;
-            margin-top: 20px;
-            border-radius: 15px;
-            display: none;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .process-section {
-            text-align: center;
-            margin-bottom: 60px;
-        }
-
-        .process-btn {
-            background: linear-gradient(135deg, #c6ff00, #00ff88);
-            color: #003366;
-            padding: 20px 60px;
-            border: none;
-            border-radius: 35px;
-            font-size: 1.2em;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 30px rgba(198, 255, 0, 0.3);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .process-btn:hover:not(:disabled) {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(198, 255, 0, 0.4);
-        }
-
-        .process-btn:disabled {
-            background: #e0e0e0;
-            color: #999;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-
-        .loading {
-            display: none;
-            text-align: center;
-            margin: 50px 0;
-        }
-
-        .spinner {
-            border: 6px solid #f0f0f0;
-            border-top: 6px solid #0066cc;
-            border-radius: 50%;
-            width: 70px;
-            height: 70px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 25px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .loading-text {
-            color: #0066cc;
-            font-size: 1.2em;
-            font-weight: 600;
-        }
-
-        .results-section {
-            display: none;
-            padding: 40px 0;
-        }
-
-        .results-section h2 {
-            text-align: center;
-            margin-bottom: 40px;
-            color: #1a1a1a;
-            font-size: 2.2em;
-            font-weight: 700;
-        }
-
-        .results-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 25px;
-            margin-bottom: 40px;
-        }
-
-        .result-card {
-            background: white;
-            border-radius: 20px;
-            padding: 25px;
-            text-align: center;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
-            border: 2px solid #f0f0f0;
-        }
-
-        .result-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
-            border-color: #0066cc;
-        }
-
-        .result-card:last-child {
-            border-color: #c6ff00;
-        }
-
-        .result-card h3 {
-            color: #1a1a1a;
-            margin-bottom: 20px;
-            font-size: 1.15em;
-            font-weight: 700;
-        }
-
-        .result-card img {
-            width: 100%;
-            border-radius: 12px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .download-section {
-            text-align: center;
-            margin-top: 40px;
-        }
-
-        .download-btn {
-            background: #0066cc;
-            color: white;
-            padding: 14px 35px;
-            border: none;
-            border-radius: 30px;
-            font-size: 1em;
-            font-weight: 600;
-            cursor: pointer;
-            margin: 0 12px;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .download-btn:hover {
-            background: #0052a3;
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0, 102, 204, 0.3);
-        }
-
-        .download-btn:first-child {
-            background: linear-gradient(135deg, #c6ff00, #00ff88);
-            color: #003366;
-        }
-
-        .download-btn:first-child:hover {
-            background: linear-gradient(135deg, #b3e600, #00e67a);
-        }
-
-        .error-message {
-            background: #ffe5e5;
-            color: #cc0000;
-            padding: 18px 25px;
-            border-radius: 15px;
-            margin: 25px 0;
-            display: none;
-            border-left: 5px solid #cc0000;
-            font-weight: 500;
-        }
-
-        .success-message {
-            background: #e6f7ed;
-            color: #00a651;
-            padding: 18px 25px;
-            border-radius: 15px;
-            margin: 25px 0;
-            display: none;
-            border-left: 5px solid #00a651;
-            font-weight: 500;
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 60px;
-            padding: 40px 0;
-            color: #999;
-            font-size: 0.95em;
-            border-top: 1px solid #e0e0e0;
-        }
-
-        footer p:first-child {
-            font-weight: 600;
-            color: #666;
-            margin-bottom: 10px;
-        }
-
-        @media (max-width: 1024px) {
-            .hero-section {
-                grid-template-columns: 1fr;
-                padding: 60px 40px;
-            }
-
-            .feature-cards {
-                grid-template-columns: 1fr;
-            }
-
-            .hero-content h1 {
-                font-size: 3em;
-            }
-
-            .container {
-                padding: 40px 30px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            nav {
-                padding: 15px 30px;
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .hero-content h1 {
-                font-size: 2.5em;
-            }
-
-            .upload-section {
-                grid-template-columns: 1fr;
-            }
-
-            .results-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .section-header h2 {
-                font-size: 2em;
-            }
-
-            .cta-button {
-                padding: 16px 35px;
-                font-size: 1em;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PhotoRevive — Restore and colorize old photographs</title>
+  <meta name="description" content="Repair scratched, faded and torn photographs, then bring them back to color using a reference photo.">
+  <meta name="theme-color" content="#15231c">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2315231c'/%3E%3Crect x='7' y='7' width='18' height='18' fill='%23ece4d2'/%3E%3Cpath d='M7 7h7l-7 7zM25 7v7l-7-7zM25 25h-7l7-7zM7 25v-7l7 7z' fill='%23d2ab62'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://images.unsplash.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ---------- Tokens ---------- */
+    :root {
+      --album: #15231c;          /* album page cloth */
+      --album-deep: #0f1a14;
+      --album-raised: #1b2d24;
+      --paper: #ece4d2;          /* text */
+      --paper-2: #f2ede1;        /* print border */
+      --ink-muted: #b4ad9b;
+      --ink-faint: #9a9786;
+      --gilt: #d2ab62;           /* gilt lettering */
+      --gilt-strong: #e2bf7a;
+      --danger: #e79a86;
+      --ok: #9fcf9a;
+      --line: rgba(236, 228, 210, 0.12);
+      --corner: #0e1812;
+
+      --serif: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+      --sans: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+      --shadow-print: 0 1px 0 rgba(255, 255, 255, 0.5) inset, 0 22px 44px -16px rgba(0, 0, 0, 0.65), 0 4px 12px rgba(0, 0, 0, 0.3);
+      --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /* ---------- Base ---------- */
+    *, *::before, *::after { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      background: var(--album);
+      color: var(--paper);
+      font-family: var(--sans);
+      font-size: 1.0625rem;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      pointer-events: none;
+      background-image: var(--grain);
+      opacity: 0.06;
+      mix-blend-mode: overlay;
+    }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; }
+    button, input { font: inherit; color: inherit; }
+    h1, h2, h3, p, figure { margin: 0; }
+    h1, h2, h3 { font-weight: 500; }
+    section[id] { scroll-margin-top: 72px; }
+    :focus-visible { outline: 2px solid var(--gilt); outline-offset: 3px; border-radius: 4px; }
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+    }
+    .wrap { width: min(1200px, 100% - 48px); margin-inline: auto; }
+
+    /* ---------- Buttons ---------- */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      height: 48px; padding: 0 22px;
+      border-radius: 10px; border: 1px solid transparent;
+      font-weight: 600; font-size: 0.98rem; text-decoration: none; white-space: nowrap;
+      cursor: pointer;
+      transition: background-color 0.2s, border-color 0.2s, color 0.2s, transform 0.15s;
+    }
+    .btn-gilt { background: var(--gilt); color: #1a1408; }
+    .btn-gilt:hover { background: var(--gilt-strong); }
+    .btn-gilt:active { transform: translateY(1px); }
+    .btn-ghost { background: rgba(15, 26, 20, 0.35); border-color: rgba(236, 228, 210, 0.28); color: var(--paper); }
+    .btn-ghost:hover { background: rgba(236, 228, 210, 0.06); border-color: rgba(236, 228, 210, 0.55); }
+    .btn-sm { height: 38px; padding: 0 16px; font-size: 0.9rem; border-radius: 8px; }
+    .btn-lg { height: 54px; padding: 0 28px; font-size: 1.02rem; }
+    .btn:disabled {
+      background: rgba(236, 228, 210, 0.08); color: rgba(236, 228, 210, 0.42);
+      border-color: transparent; cursor: not-allowed; transform: none;
+    }
+    .btn.is-busy { cursor: progress; }
+    .btn .spinner { display: none; }
+    .btn.is-busy .spinner { display: block; }
+    .spinner {
+      width: 18px; height: 18px; border-radius: 50%;
+      border: 2px solid rgba(26, 20, 8, 0.25); border-top-color: #1a1408;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .link-btn {
+      background: none; border: 0; padding: 0; cursor: pointer;
+      color: var(--gilt-strong); font-weight: 600;
+      text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px;
+    }
+    .link-btn:hover { color: var(--paper); }
+    .chip-btn {
+      height: 32px; padding: 0 12px; border-radius: 8px;
+      border: 1px solid var(--line); background: transparent;
+      color: var(--paper); font-size: 0.85rem; cursor: pointer;
+      transition: border-color 0.2s, background-color 0.2s;
+    }
+    .chip-btn:hover { border-color: rgba(236, 228, 210, 0.4); background: rgba(236, 228, 210, 0.04); }
+    .chip-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* ---------- Top bar ---------- */
+    .topbar {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(17, 29, 23, 0.8);
+      -webkit-backdrop-filter: blur(14px) saturate(1.2);
+      backdrop-filter: blur(14px) saturate(1.2);
+      border-bottom: 1px solid var(--line);
+    }
+    .topbar-inner { display: flex; align-items: center; gap: 28px; height: 64px; }
+    .brand {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: var(--serif); font-size: 1.55rem; font-weight: 600; line-height: 1;
+      text-decoration: none; letter-spacing: 0.005em;
+    }
+    .brand svg { width: 26px; height: 26px; flex: none; }
+    .topnav { display: flex; gap: 26px; margin-left: auto; }
+    .topnav a { color: var(--ink-muted); text-decoration: none; font-size: 0.95rem; transition: color 0.2s; }
+    .topnav a:hover { color: var(--paper); }
+    .status {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line);
+      font-size: 0.84rem; color: var(--ink-muted); white-space: nowrap;
+    }
+    .status .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ink-faint); flex: none; }
+    .status[data-state="ready"] .dot { background: var(--ok); box-shadow: 0 0 0 3px rgba(159, 207, 154, 0.18); }
+    .status[data-state="warn"] .dot { background: var(--gilt); box-shadow: 0 0 0 3px rgba(210, 171, 98, 0.18); }
+    .status[data-state="down"] .dot { background: var(--danger); box-shadow: 0 0 0 3px rgba(231, 154, 134, 0.18); }
+
+    /* ---------- Prints & photo corners ---------- */
+    .print {
+      position: relative;
+      background: var(--paper-2);
+      padding: 12px;
+      border-radius: 2px;
+      box-shadow: var(--shadow-print);
+    }
+    .corners { position: absolute; inset: 0; pointer-events: none; z-index: 4; }
+    .corners i {
+      position: absolute;
+      width: var(--cs, 42px); height: var(--cs, 42px);
+      background: linear-gradient(135deg, var(--corner) 0 calc(50% - 1px), rgba(255, 255, 255, 0.16) calc(50% - 1px) 50%, transparent 50%);
+      filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, 0.45));
+    }
+    .corners i:nth-child(1) { top: -4px; left: -4px; }
+    .corners i:nth-child(2) { top: -4px; right: -4px; transform: rotate(90deg); }
+    .corners i:nth-child(3) { bottom: -4px; right: -4px; transform: rotate(180deg); }
+    .corners i:nth-child(4) { bottom: -4px; left: -4px; transform: rotate(270deg); }
+
+    /* Simulated wear for the example photos */
+    img.aged { filter: grayscale(1) sepia(0.5) contrast(0.78) brightness(1.06) blur(0.35px); }
+    .damage {
+      position: absolute; inset: 0; pointer-events: none;
+      background:
+        radial-gradient(55% 38% at 80% 84%, rgba(120, 84, 30, 0.38), transparent 70%),
+        radial-gradient(32% 24% at 16% 20%, rgba(130, 95, 40, 0.26), transparent 70%),
+        radial-gradient(120% 120% at 50% 50%, transparent 55%, rgba(60, 40, 15, 0.5) 100%);
+    }
+    .damage::after {
+      content: ""; position: absolute; inset: 0;
+      background-image: var(--grain); background-size: 140px;
+      opacity: 0.45; mix-blend-mode: overlay;
+    }
+    .wear { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+    /* ---------- Before / after compare ---------- */
+    .compare {
+      --pos: 50%;
+      position: relative; overflow: hidden;
+      background: #ddd6c6;
+      cursor: ew-resize; touch-action: pan-y;
+      -webkit-user-select: none; user-select: none;
+    }
+    .cmp-layer { position: absolute; inset: 0; }
+    .cmp-layer img {
+      width: 100%; height: 100%; object-fit: cover;
+      pointer-events: none; -webkit-user-drag: none;
+    }
+    .cmp-before { clip-path: inset(0 calc(100% - var(--pos)) 0 0); }
+    .cmp-tag {
+      position: absolute; top: 12px; z-index: 3;
+      padding: 4px 10px; border-radius: 999px;
+      background: rgba(15, 26, 20, 0.74); color: var(--paper);
+      -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+      font-size: 0.78rem; font-weight: 600; letter-spacing: 0.01em; line-height: 1.4;
+    }
+    .cmp-before .cmp-tag { left: 12px; }
+    .cmp-after .cmp-tag { right: 12px; }
+    .cmp-handle { position: absolute; top: 0; bottom: 0; left: var(--pos); width: 0; z-index: 5; pointer-events: none; }
+    .cmp-handle::before {
+      content: ""; position: absolute; top: 0; bottom: 0; left: -1px; width: 2px;
+      background: var(--paper-2);
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12), 0 0 14px rgba(0, 0, 0, 0.35);
+    }
+    .cmp-knob {
+      position: absolute; top: 50%; left: 0;
+      width: 44px; height: 44px; margin: -22px 0 0 -22px;
+      display: grid; place-items: center;
+      border-radius: 50%; background: var(--paper-2); color: #1a1408;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+      transition: transform 0.15s;
+    }
+    .cmp-knob svg { width: 20px; height: 20px; }
+    .compare.is-dragging .cmp-knob { transform: scale(0.92); }
+    .cmp-range:focus-visible ~ .cmp-handle .cmp-knob { outline: 2px solid var(--gilt); outline-offset: 3px; }
+
+    /* ---------- Hero ---------- */
+    .hero {
+      position: relative; isolation: isolate; overflow: hidden;
+      padding: clamp(48px, 8vh, 96px) 0 clamp(80px, 12vh, 136px);
+    }
+    .hero-bg { position: absolute; inset: 0; z-index: -1; }
+    .hero-bg img {
+      width: 100%; height: 100%; object-fit: cover;
+      filter: grayscale(1) contrast(1.12) brightness(0.72);
+      transform: scale(1.04);
+    }
+    .hero-bg::before {
+      content: ""; position: absolute; inset: 0;
+      background: #2c5c42; mix-blend-mode: color;
+    }
+    .hero-bg::after {
+      content: ""; position: absolute; inset: 0;
+      background:
+        radial-gradient(38% 48% at 72% 50%, rgba(210, 171, 98, 0.12), transparent 70%),
+        linear-gradient(90deg, rgba(21, 35, 28, 0.97) 0%, rgba(21, 35, 28, 0.84) 36%, rgba(21, 35, 28, 0.5) 68%, rgba(21, 35, 28, 0.7) 100%),
+        linear-gradient(180deg, rgba(21, 35, 28, 0.2) 0%, rgba(21, 35, 28, 0) 50%, var(--album) 100%);
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr);
+      gap: clamp(40px, 6vw, 96px);
+      align-items: center;
+    }
+    .hero h1 {
+      font-family: var(--serif);
+      font-size: clamp(2.8rem, 1.2rem + 4.4vw, 5.4rem);
+      font-weight: 500;
+      line-height: 0.98;
+      letter-spacing: -0.015em;
+      text-wrap: balance;
+    }
+    .lede {
+      margin-top: 26px; max-width: 31em;
+      font-size: 1.16rem; line-height: 1.6; color: var(--ink-muted);
+    }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 38px; }
+
+    .hero-figure { justify-self: center; width: min(430px, 100%); }
+    .stack { position: relative; }
+    .stack .print-back { position: absolute; inset: 0; padding: 12px; }
+    .stack .print-back img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) sepia(0.6) contrast(0.85); opacity: 0.85; }
+    .stack .back-1 { transform: translate(26px, 8px) rotate(5.5deg); }
+    .stack .back-2 { transform: translate(-22px, 16px) rotate(-4.5deg); background: #e7e0d0; }
+    .stack .front { z-index: 1; }
+    .hero-compare { aspect-ratio: 4 / 5; }
+    .hero-figure figcaption { margin-top: 30px; text-align: center; }
+    .caption-title { font-family: var(--serif); font-style: italic; font-size: 1.2rem; line-height: 1.3; }
+    .caption-note { margin-top: 4px; font-size: 0.85rem; color: var(--ink-faint); }
+
+    /* ---------- Sections ---------- */
+    .section { padding: clamp(72px, 10vw, 128px) 0; }
+    .section-head { max-width: 40rem; margin-bottom: clamp(36px, 5vw, 60px); }
+    .section-head h2 {
+      font-family: var(--serif); font-weight: 500;
+      font-size: clamp(2.2rem, 1.4rem + 2.2vw, 3.4rem);
+      line-height: 1.04; letter-spacing: -0.01em;
+    }
+    .section-head p { margin-top: 14px; font-size: 1.08rem; color: var(--ink-muted); max-width: 34em; }
+
+    /* How it works */
+    .how { padding-top: clamp(24px, 4vw, 48px); }
+    .steps {
+      list-style: none; margin: 0; padding: 0;
+      display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: clamp(28px, 4vw, 56px);
+    }
+    .step .print { --cs: 30px; padding: 9px; }
+    .step:nth-child(1) .print { transform: rotate(-1.2deg); }
+    .step:nth-child(2) .print { transform: rotate(0.9deg); }
+    .step:nth-child(3) .print { transform: rotate(-0.5deg); }
+    .ph { position: relative; aspect-ratio: 5 / 4; overflow: hidden; background: #ddd6c6; }
+    .ph img { width: 100%; height: 100%; object-fit: cover; }
+    .step-body { display: grid; grid-template-columns: auto 1fr; column-gap: 16px; margin-top: 30px; }
+    .step-num {
+      font-family: var(--serif); font-size: 2.8rem; line-height: 0.85;
+      color: var(--gilt); font-variant-numeric: lining-nums;
+    }
+    .step h3 { font-size: 1.1rem; font-weight: 600; line-height: 1.35; }
+    .step p { margin-top: 8px; color: var(--ink-muted); font-size: 0.98rem; }
+
+    /* ---------- Studio ---------- */
+    .studio { padding-top: 0; }
+    .album {
+      background: var(--album-raised);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: clamp(20px, 3vw, 36px);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03), 0 40px 80px -40px rgba(0, 0, 0, 0.6);
+    }
+    .slots { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(16px, 2.5vw, 32px); }
+    .slot-head { margin-bottom: 14px; }
+    .slot-head h3 { font-family: var(--serif); font-size: 1.65rem; line-height: 1.1; }
+    .slot-head p { margin-top: 4px; font-size: 0.92rem; color: var(--ink-muted); }
+    .mount {
+      position: relative; aspect-ratio: 4 / 3; overflow: hidden;
+      border-radius: 6px;
+      background: rgba(10, 18, 14, 0.45);
+      border: 1px dashed rgba(236, 228, 210, 0.2);
+      cursor: pointer;
+      transition: border-color 0.2s, background-color 0.2s;
+    }
+    .mount:hover { border-color: rgba(210, 171, 98, 0.55); }
+    .slot.is-drag .mount { border-style: solid; border-color: var(--gilt); background: rgba(210, 171, 98, 0.08); }
+    .mount .corners { inset: 18px; }
+    .mount .corners i { --cs: 30px; filter: none; background: linear-gradient(135deg, rgba(210, 171, 98, 0.5) 0 50%, transparent 50%); }
+    .mount-empty {
+      position: absolute; inset: 0; padding: 28px;
+      display: grid; place-content: center; justify-items: center; gap: 10px;
+      text-align: center;
+    }
+    .mount-empty svg { width: 40px; height: 40px; color: var(--gilt); }
+    .mount-empty .lead { font-size: 1rem; }
+    .mount-empty .note { font-size: 0.85rem; color: var(--ink-faint); }
+    .mount-img {
+      position: absolute; inset: 22px; margin: auto;
+      width: auto; height: auto;
+      max-width: calc(100% - 58px); max-height: calc(100% - 58px);
+      padding: 7px; background: var(--paper-2);
+      border-radius: 2px; box-shadow: var(--shadow-print);
+    }
+    .slot.has-file .mount { border-style: solid; border-color: var(--line); }
+    .slot.has-file .mount-empty, .slot.has-file .mount .corners { display: none; }
+    .scan { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 0.3s; z-index: 2; overflow: hidden; }
+    .slot.is-scanning .scan { opacity: 1; }
+    .slot.is-scanning .mount { cursor: progress; }
+    .scan::before {
+      content: ""; position: absolute; left: 0; right: 0; height: 36%; top: -36%;
+      background: linear-gradient(180deg, transparent, rgba(226, 191, 122, 0.1) 70%, rgba(242, 215, 160, 0.5) 98%, rgba(255, 242, 214, 0.9) 100%);
+      animation: scan 2.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+    }
+    @keyframes scan { to { top: 100%; } }
+    .slot-meta { display: flex; align-items: center; gap: 12px; min-height: 32px; margin-top: 12px; font-size: 0.88rem; color: var(--ink-muted); }
+    .meta-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--paper); }
+    .meta-dims { flex: none; }
+    .meta-actions { display: flex; gap: 6px; margin-left: auto; flex: none; }
+
+    .action-bar {
+      display: flex; align-items: center; justify-content: space-between; gap: 20px;
+      margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--line);
+    }
+    .action-hint { font-size: 0.95rem; color: var(--ink-muted); }
+    .server-note { margin-top: 4px; font-size: 0.9rem; color: var(--danger); }
+
+    /* ---------- Results ---------- */
+    .results { padding-top: 0; scroll-margin-top: 96px; }
+    .results-head { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 20px; margin-bottom: 30px; }
+    .results-head h2 { font-family: var(--serif); font-size: clamp(2rem, 1.3rem + 2vw, 3rem); line-height: 1.05; }
+    .results-head h2:focus { outline: none; }
+    .seg {
+      display: inline-flex; flex-wrap: wrap; gap: 2px; padding: 4px;
+      border-radius: 12px; border: 1px solid var(--line); background: rgba(10, 18, 14, 0.5);
+    }
+    .seg button {
+      height: 36px; padding: 0 14px; border: 0; border-radius: 9px;
+      background: transparent; color: var(--ink-muted);
+      font-size: 0.9rem; font-weight: 500; cursor: pointer;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .seg button:hover { color: var(--paper); }
+    .seg button[aria-pressed="true"] { background: var(--paper-2); color: #1a1408; }
+    .results-grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: clamp(28px, 4vw, 56px); align-items: start; }
+    .result-print { width: 100%; max-width: calc(74vh * var(--ar, 1.3333)); margin-inline: auto; }
+    .result-print .compare { aspect-ratio: var(--ar, 4 / 3); }
+    .result-print .cmp-layer img { object-fit: contain; }
+    .side-note { font-size: 0.9rem; color: var(--ink-muted); margin-bottom: 14px; }
+    .stages { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .stage-btn { display: block; width: 100%; padding: 0; border: 0; background: none; text-align: left; cursor: zoom-in; }
+    .stage-btn .thumb { aspect-ratio: 1; padding: 5px; background: var(--paper-2); border-radius: 2px; box-shadow: var(--shadow-print); transition: transform 0.2s; }
+    .stage-btn img { width: 100%; height: 100%; object-fit: cover; }
+    .stage-btn span { display: block; margin-top: 8px; font-size: 0.88rem; color: var(--ink-muted); transition: color 0.2s; }
+    .stage-btn:hover .thumb { transform: translateY(-2px); }
+    .stage-btn:hover span { color: var(--paper); }
+    .side-actions { display: grid; gap: 10px; margin-top: 28px; }
+    .side-actions .btn { width: 100%; }
+    .side-actions .link-btn { justify-self: center; margin-top: 6px; font-size: 0.95rem; }
+
+    /* ---------- Viewer ---------- */
+    .viewer { padding: 0; border: 0; background: transparent; color: var(--paper); max-width: 94vw; max-height: 94vh; overflow: visible; }
+    .viewer::backdrop { background: rgba(8, 13, 10, 0.88); }
+    .viewer img { max-width: min(92vw, 1200px); max-height: 80vh; width: auto; height: auto; margin-inline: auto; padding: 10px; background: var(--paper-2); }
+    .viewer-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 14px; }
+    .viewer-title { font-family: var(--serif); font-size: 1.4rem; }
+    .viewer-actions { display: flex; gap: 8px; }
+
+    /* ---------- Toasts ---------- */
+    .toasts { position: fixed; right: 20px; bottom: 20px; z-index: 200; display: grid; gap: 10px; width: min(420px, calc(100vw - 40px)); }
+    .toast {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 14px 12px 14px 16px; border-radius: 12px;
+      background: #2b1e1a; border: 1px solid rgba(231, 154, 134, 0.38); color: #f6ddd5;
+      box-shadow: 0 18px 40px -12px rgba(0, 0, 0, 0.6);
+      font-size: 0.93rem; line-height: 1.45;
+      animation: toast-in 0.22s ease-out;
+    }
+    .toast-info { background: var(--album-raised); border-color: var(--line); color: var(--paper); }
+    .toast p { flex: 1; padding-top: 3px; }
+    .toast button { flex: none; width: 30px; height: 30px; display: grid; place-items: center; border: 0; border-radius: 6px; background: transparent; cursor: pointer; opacity: 0.75; }
+    .toast button:hover { opacity: 1; background: rgba(255, 255, 255, 0.06); }
+    .toast svg { width: 16px; height: 16px; }
+    @keyframes toast-in { from { opacity: 0; transform: translateY(8px); } }
+
+    /* ---------- Footer ---------- */
+    .site-foot { padding: 40px 0 56px; border-top: 1px solid var(--line); font-size: 0.92rem; color: var(--ink-muted); }
+    .foot-grid { display: grid; grid-template-columns: auto 1fr; gap: 16px 56px; align-items: start; }
+    .foot-grid .brand { font-size: 1.35rem; }
+    .foot-copy p + p { margin-top: 8px; }
+    .site-foot a { color: var(--paper); text-underline-offset: 3px; text-decoration-color: rgba(236, 228, 210, 0.35); }
+    .site-foot a:hover { text-decoration-color: var(--gilt); }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 960px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .hero-figure { width: min(380px, 84%); }
+      .hero-bg::after {
+        background:
+          linear-gradient(180deg, rgba(21, 35, 28, 0.92) 0%, rgba(21, 35, 28, 0.72) 48%, rgba(21, 35, 28, 0.82) 80%, var(--album) 100%);
+      }
+      .steps { grid-template-columns: 1fr; gap: 44px; }
+      .step { display: grid; grid-template-columns: minmax(0, 240px) 1fr; gap: 28px; align-items: center; }
+      .step-body { margin-top: 0; }
+      .results-grid { grid-template-columns: 1fr; }
+      .stages { grid-template-columns: repeat(4, 1fr); }
+      .side-actions { grid-template-columns: 1fr 1fr; }
+      .side-actions .link-btn { grid-column: 1 / -1; }
+    }
+    @media (max-width: 760px) {
+      .topnav { display: none; }
+      .status { margin-left: auto; }
+    }
+    @media (max-width: 640px) {
+      .wrap { width: calc(100% - 32px); }
+      .topbar-inner { gap: 12px; }
+      .status-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+      .status { padding: 9px; }
+      .hero-actions .btn { flex: 1 1 auto; }
+      .slots { grid-template-columns: 1fr; }
+      .action-bar { flex-direction: column; align-items: stretch; }
+      .action-bar .btn { width: 100%; }
+      .step { grid-template-columns: 1fr; }
+      .step .print { max-width: 360px; }
+      .stages { grid-template-columns: 1fr 1fr; }
+      .side-actions { grid-template-columns: 1fr; }
+      .foot-grid { grid-template-columns: 1fr; }
+      .seg { width: 100%; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+      .seg::-webkit-scrollbar { display: none; }
+      .seg button { flex: none; padding: 0 12px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .scan::before { animation: none; top: 0; height: 100%; background: rgba(210, 171, 98, 0.12); }
+      .toast { animation: none; }
+      .spinner { animation-duration: 2.4s; }
+    }
+  </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav>
-        <div class="logo">
-            <div class="logo-icon"></div>
-            <span>PhotoRevive</span>
-        </div>
-        <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})">GET STARTED</button>
-    </nav>
+  <!-- Shared artwork: wear marks for the example photos -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <symbol id="wear" viewBox="0 0 400 500" preserveAspectRatio="none">
+        <g fill="none" stroke="#fff" stroke-linecap="round">
+          <path d="M58 -4 C66 110 50 250 70 504" stroke-width="1.3" opacity=".55"/>
+          <path d="M61 120 C63 160 60 190 62 230" stroke-width="2.4" opacity=".3"/>
+          <path d="M292 30 C286 130 302 214 290 330" stroke-width=".9" opacity=".5"/>
+          <path d="M138 296 L232 350" stroke-width=".8" opacity=".55"/>
+          <path d="M326 372 c10 22 -4 52 12 84" stroke-width="1.1" opacity=".5"/>
+          <path d="M190 40 c-14 8 -20 22 -34 26" stroke-width=".7" opacity=".5"/>
+          <path d="M-4 214 C110 198 262 234 404 216" stroke-width="3.2" opacity=".14"/>
+          <path d="M-4 216 C110 200 262 236 404 218" stroke-width=".8" opacity=".45"/>
+        </g>
+        <g fill="#fff" opacity=".7">
+          <circle cx="88" cy="64" r="1.4"/><circle cx="142" cy="118" r=".9"/><circle cx="244" cy="96" r="1.6"/>
+          <circle cx="318" cy="150" r="1"/><circle cx="210" cy="182" r=".8"/><circle cx="96" cy="276" r="1.8"/>
+          <circle cx="172" cy="402" r="1.2"/><circle cx="266" cy="438" r=".9"/><circle cx="352" cy="286" r="1.5"/>
+          <circle cx="34" cy="368" r="1"/><circle cx="230" cy="262" r=".7"/><circle cx="300" cy="470" r="1.3"/>
+          <circle cx="120" cy="452" r=".8"/><circle cx="380" cy="96" r="1.1"/><circle cx="16" cy="140" r=".9"/>
+        </g>
+        <path d="M318 0 H400 V84 L392 76 L384 80 L376 66 L366 64 L360 50 L350 46 L346 32 L336 26 L332 12 Z" fill="#ebe5d6"/>
+        <path d="M0 448 L0 500 L44 500 L40 492 L30 490 L26 480 L16 476 L12 462 Z" fill="#ebe5d6" opacity=".9"/>
+      </symbol>
+      <symbol id="mark" viewBox="0 0 24 24">
+        <rect x="4" y="4" width="16" height="16" fill="#ece4d2"/>
+        <path d="M6.5 16.5l3.5-4 2.5 2.5 2-2 3 3.5z" fill="#9aa79a"/>
+        <circle cx="15" cy="9" r="1.6" fill="#c7b089"/>
+        <path d="M4 4h6L4 10zM20 4v6l-6-6zM20 20h-6l6-6zM4 20v-6l6 6z" fill="#d2ab62"/>
+      </symbol>
+      <symbol id="chevrons" viewBox="0 0 24 24">
+        <path d="M9 7l-5 5 5 5M15 7l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </symbol>
+      <symbol id="x" viewBox="0 0 24 24">
+        <path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </symbol>
+    </defs>
+  </svg>
 
-    <!-- Hero Section -->
-    <div class="hero-section">
-        <div class="hero-content">
-            <h1>
-                Restoring memories<br>
-                with <span class="highlight">AI</span> and strategy
-            </h1>
-            <p>We help you unlock the beauty of old photographs through AI-powered restoration and intelligent colorization.</p>
-            <button class="cta-button" onclick="document.querySelector('.container').scrollIntoView({behavior: 'smooth'})">
-                GET STARTED
-            </button>
-            <div class="rating">
-                <div class="stars">★★★★★</div>
-                <p>Rated 4.9/5 by 4,900+ clients</p>
-            </div>
-        </div>
-        
-        <div class="feature-cards">
-            <div class="feature-card">
-                <h3>Pipeline</h3>
-                <p class="description">Damaged → Restoration → Colorization → Final</p>
-            </div>
-            <div class="feature-card">
-                <h3>Quality</h3>
-                <div class="metric">99%</div>
-                <p class="description">Customer satisfaction</p>
-            </div>
-            <div class="feature-card dark">
-                <h3>Expertise</h3>
-                <p class="description">Combines Strategy, Data, and Artificial Intelligence</p>
-            </div>
-            <div class="feature-card accent">
-                <div class="metric">100%</div>
-                <p class="description">Commitment to measurable results</p>
-            </div>
-        </div>
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <a class="brand" href="#top" aria-label="PhotoRevive home">
+        <svg aria-hidden="true"><use href="#mark"/></svg>
+        PhotoRevive
+      </a>
+      <nav class="topnav" aria-label="Main">
+        <a href="#how">How it works</a>
+        <a href="#studio">Studio</a>
+      </nav>
+      <div class="status" id="serverStatus" data-state="checking" role="status" title="Checking the server">
+        <span class="dot" aria-hidden="true"></span>
+        <span class="status-text">Checking server</span>
+      </div>
+      <a class="btn btn-ghost btn-sm" href="#studio">Restore a photo</a>
     </div>
+  </header>
 
-    <!-- Main Container -->
-    <div class="container">
-        <div class="section-header">
-            <h2>
-                A <span class="highlight-text">powerful tool</span> dedicated to
-                <br>restoring<span class="accent-dot">•</span> smarter and more adaptive
-            </h2>
-            <p>Upload your old photos and let our AI bring them back to life with stunning colors</p>
+  <main>
+    <!-- Hero -->
+    <section class="hero" id="top">
+      <div class="hero-bg" aria-hidden="true">
+        <img src="https://images.unsplash.com/photo-1533158307587-828f0a76ef46?auto=format&amp;fit=crop&amp;w=2400&amp;q=70" alt="">
+      </div>
+
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <h1>Old photographs, repaired and returned to color.</h1>
+          <p class="lede">Upload a scratched, faded or torn print. PhotoRevive repairs the damage first, then colors it using a reference photo you choose.</p>
+          <div class="hero-actions">
+            <a class="btn btn-gilt btn-lg" href="#studio">Restore a photo</a>
+            <a class="btn btn-ghost btn-lg" href="#how">See how it works</a>
+          </div>
         </div>
 
-        <div class="upload-section">
-            <div class="upload-box" onclick="document.getElementById('oldPhotoInput').click()">
-                <h3>Old/Damaged Photo</h3>
-                <p>Upload your damaged or old black & white photograph</p>
-                <button class="upload-btn" type="button">Choose File</button>
-                <input type="file" id="oldPhotoInput" class="file-input" accept="image/*">
-                <div id="oldPhotoName" class="file-name"></div>
-                <img id="oldPhotoPreview" class="preview-img" alt="Old photo preview">
+        <figure class="hero-figure">
+          <div class="stack">
+            <div class="print print-back back-1" aria-hidden="true">
+              <img src="https://images.unsplash.com/photo-1682718619160-13de8c7793b2?auto=format&amp;fit=crop&amp;crop=faces,edges&amp;w=600&amp;h=750&amp;q=60" alt="">
             </div>
+            <div class="print print-back back-2" aria-hidden="true"></div>
+            <div class="print front">
+              <div class="compare hero-compare" id="heroCompare">
+                <div class="cmp-layer cmp-after">
+                  <img src="https://images.unsplash.com/photo-1682718619204-2498d5e90972?auto=format&amp;fit=crop&amp;crop=faces,edges&amp;w=1000&amp;h=1250&amp;q=80" alt="A woman in a yellow hat holding a basket of flowers, in full color" draggable="false" fetchpriority="high">
+                  <span class="cmp-tag">Restored</span>
+                </div>
+                <div class="cmp-layer cmp-before">
+                  <img class="aged" src="https://images.unsplash.com/photo-1682718619204-2498d5e90972?auto=format&amp;fit=crop&amp;crop=faces,edges&amp;w=1000&amp;h=1250&amp;q=80" alt="" draggable="false">
+                  <div class="damage"><svg class="wear" aria-hidden="true"><use href="#wear"/></svg></div>
+                  <span class="cmp-tag">As found</span>
+                </div>
+                <input class="cmp-range sr-only" type="range" min="0" max="100" value="50" aria-label="Compare the damaged and restored photo">
+                <div class="cmp-handle" aria-hidden="true"><span class="cmp-knob"><svg><use href="#chevrons"/></svg></span></div>
+              </div>
+              <span class="corners" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            </div>
+          </div>
+          <figcaption>
+            <p class="caption-title">Model with a basket of flowers, Sarasota, c. 1945</p>
+            <p class="caption-note">Drag across the print to compare. Damage simulated for this example.</p>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
 
-            <div class="upload-box" onclick="document.getElementById('referenceInput').click()">
-                <h3>Color Reference</h3>
-                <p>Upload a color reference image for style guidance</p>
-                <button class="upload-btn" type="button">Choose File</button>
-                <input type="file" id="referenceInput" class="file-input" accept="image/*">
-                <div id="referenceName" class="file-name"></div>
-                <img id="referencePreview" class="preview-img" alt="Reference preview">
-            </div>
+    <!-- How it works -->
+    <section class="section how" id="how">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>How it works</h2>
+          <p>Two models run one after the other on your server. The first repairs the print, the second adds color.</p>
         </div>
 
-        <div class="process-section">
-            <button id="processBtn" class="process-btn" disabled>
-                🚀 Restore & Colorize
+        <ol class="steps">
+          <li class="step">
+            <div class="print">
+              <div class="ph">
+                <img class="aged" src="https://images.unsplash.com/photo-1682718619204-2498d5e90972?auto=format&amp;fit=crop&amp;crop=faces,edges&amp;w=720&amp;h=576&amp;q=75" alt="A faded, scratched black and white photo" loading="lazy">
+                <div class="damage"><svg class="wear" aria-hidden="true"><use href="#wear"/></svg></div>
+              </div>
+              <span class="corners" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            </div>
+            <div class="step-body">
+              <span class="step-num" aria-hidden="true">1</span>
+              <div>
+                <h3>Upload the damaged photo</h3>
+                <p>Scratches, creases, dust, fading and small tears are all fine. Scan or photograph it flat, in even light.</p>
+              </div>
+            </div>
+          </li>
+          <li class="step">
+            <div class="print">
+              <div class="ph">
+                <img src="https://images.unsplash.com/photo-1682718619160-13de8c7793b2?auto=format&amp;fit=crop&amp;crop=faces,edges&amp;w=720&amp;h=576&amp;q=75" alt="A color photo of a woman holding gladiolus in a field" loading="lazy">
+              </div>
+              <span class="corners" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            </div>
+            <div class="step-body">
+              <span class="step-num" aria-hidden="true">2</span>
+              <div>
+                <h3>Add a color reference</h3>
+                <p>Pick a color photo with a similar subject and light: a portrait for a portrait, a garden for a garden. Its palette guides the result.</p>
+              </div>
+            </div>
+          </li>
+          <li class="step">
+            <div class="print">
+              <div class="ph">
+                <img src="https://images.unsplash.com/photo-1682718619204-2498d5e90972?auto=format&amp;fit=crop&amp;crop=faces,edges&amp;w=720&amp;h=576&amp;q=75" alt="The same photo, repaired and in color" loading="lazy">
+              </div>
+              <span class="corners" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            </div>
+            <div class="step-body">
+              <span class="step-num" aria-hidden="true">3</span>
+              <div>
+                <h3>Restore and colorize</h3>
+                <p>The server repairs the damage, then transfers color from your reference. It can take a minute or so. Download either version.</p>
+              </div>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Studio -->
+    <section class="section studio" id="studio">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Restore a photo</h2>
+          <p>Add the photo you want repaired and a color photo to borrow its palette from.</p>
+        </div>
+
+        <div class="album">
+          <div class="slots">
+            <div class="slot" data-slot="old">
+              <div class="slot-head">
+                <h3>Damaged photo</h3>
+                <p>Black and white, sepia or faded color</p>
+              </div>
+              <div class="mount">
+                <span class="corners" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+                <div class="mount-empty">
+                  <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="6" y="8" width="28" height="24" rx="1.5"/><path d="M9 28l7-8 5 5 4-4 6 7"/><circle cx="26" cy="15" r="2.5"/></svg>
+                  <p class="lead">Drop the photo here or <button type="button" class="link-btn" data-browse>choose a file</button></p>
+                  <p class="note">JPG, PNG or WebP. You can also paste an image.</p>
+                </div>
+                <img class="mount-img" alt="" hidden>
+                <div class="scan" aria-hidden="true"></div>
+              </div>
+              <div class="slot-meta" hidden>
+                <span class="meta-name"></span>
+                <span class="meta-dims"></span>
+                <span class="meta-actions">
+                  <button type="button" class="chip-btn" data-browse>Replace</button>
+                  <button type="button" class="chip-btn" data-remove>Remove</button>
+                </span>
+              </div>
+              <input type="file" id="oldPhotoInput" accept="image/*" hidden aria-label="Damaged photo">
+            </div>
+
+            <div class="slot" data-slot="ref">
+              <div class="slot-head">
+                <h3>Color reference</h3>
+                <p>A color photo with a similar subject and light</p>
+              </div>
+              <div class="mount">
+                <span class="corners" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+                <div class="mount-empty">
+                  <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="15" cy="16" r="7"/><circle cx="25" cy="16" r="7"/><circle cx="20" cy="24" r="7"/></svg>
+                  <p class="lead">Drop the reference here or <button type="button" class="link-btn" data-browse>choose a file</button></p>
+                  <p class="note">The closer the scene, the more faithful the colors.</p>
+                </div>
+                <img class="mount-img" alt="" hidden>
+                <div class="scan" aria-hidden="true"></div>
+              </div>
+              <div class="slot-meta" hidden>
+                <span class="meta-name"></span>
+                <span class="meta-dims"></span>
+                <span class="meta-actions">
+                  <button type="button" class="chip-btn" data-browse>Replace</button>
+                  <button type="button" class="chip-btn" data-remove>Remove</button>
+                </span>
+              </div>
+              <input type="file" id="referenceInput" accept="image/*" hidden aria-label="Color reference">
+            </div>
+          </div>
+
+          <div class="action-bar">
+            <div>
+              <p class="action-hint" id="actionHint" aria-live="polite">Add both images to continue.</p>
+              <p class="server-note" id="serverNote" hidden></p>
+            </div>
+            <button type="button" class="btn btn-gilt btn-lg" id="processBtn" disabled>
+              <span class="spinner" aria-hidden="true"></span>
+              <span class="btn-label">Restore and colorize</span>
             </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Results -->
+    <section class="section results" id="results" hidden>
+      <div class="wrap">
+        <div class="results-head">
+          <h2 id="resultsTitle" tabindex="-1">Your photo, restored</h2>
+          <div class="seg" id="modeSwitch" role="group" aria-label="Compare">
+            <button type="button" data-mode="original-colorized" aria-pressed="true">Original vs colorized</button>
+            <button type="button" data-mode="restored-colorized" aria-pressed="false">Restored vs colorized</button>
+            <button type="button" data-mode="original-restored" aria-pressed="false">Original vs restored</button>
+          </div>
         </div>
 
-        <div id="loading" class="loading">
-            <div class="spinner"></div>
-            <p class="loading-text">Processing your image... This may take a minute.</p>
-        </div>
-
-        <div id="errorMessage" class="error-message"></div>
-        <div id="successMessage" class="success-message"></div>
-
-        <div id="resultsSection" class="results-section">
-            <h2 style="text-align: center; margin-bottom: 30px; color: #333;">Results</h2>
-            
-            <div class="results-grid">
-                <div class="result-card">
-                    <h3>Original (Damaged)</h3>
-                    <img id="resultOriginal" alt="Original">
-                </div>
-                <div class="result-card">
-                    <h3>Restored</h3>
-                    <img id="resultRestored" alt="Restored">
-                </div>
-                <div class="result-card">
-                    <h3>Reference</h3>
-                    <img id="resultReference" alt="Reference">
-                </div>
-                <div class="result-card">
-                    <h3>Final Colorized ✨</h3>
-                    <img id="resultColorized" alt="Colorized">
-                </div>
+        <div class="results-grid">
+          <div class="print result-print" id="resultPrint">
+            <div class="compare" id="resultCompare">
+              <div class="cmp-layer cmp-after">
+                <img alt="" draggable="false">
+                <span class="cmp-tag">Colorized</span>
+              </div>
+              <div class="cmp-layer cmp-before">
+                <img alt="" draggable="false">
+                <span class="cmp-tag">Original</span>
+              </div>
+              <input class="cmp-range sr-only" type="range" min="0" max="100" value="50" aria-label="Compare original and colorized">
+              <div class="cmp-handle" aria-hidden="true"><span class="cmp-knob"><svg><use href="#chevrons"/></svg></span></div>
             </div>
+            <span class="corners" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          </div>
 
-            <div class="download-section">
-                <button class="download-btn" onclick="downloadImage('colorized')">
-                    ⬇ Download Colorized
-                </button>
-                <button class="download-btn" onclick="downloadImage('restored')">
-                    ⬇ Download Restored
-                </button>
+          <aside>
+            <p class="side-note">Select any stage to view it full size.</p>
+            <ul class="stages">
+              <li><button type="button" class="stage-btn" data-stage="original"><span class="thumb"><img alt=""></span><span>Original</span></button></li>
+              <li><button type="button" class="stage-btn" data-stage="restored"><span class="thumb"><img alt=""></span><span>Restored</span></button></li>
+              <li><button type="button" class="stage-btn" data-stage="reference"><span class="thumb"><img alt=""></span><span>Reference</span></button></li>
+              <li><button type="button" class="stage-btn" data-stage="colorized"><span class="thumb"><img alt=""></span><span>Colorized</span></button></li>
+            </ul>
+            <div class="side-actions">
+              <button type="button" class="btn btn-gilt" id="dlColorized">Download colorized</button>
+              <button type="button" class="btn btn-ghost" id="dlRestored">Download restored</button>
+              <button type="button" class="link-btn" id="resetBtn">Restore another photo</button>
             </div>
+          </aside>
         </div>
+      </div>
+    </section>
+  </main>
 
-        <footer>
-            <p>Powered by PyTorch • Deep Exemplar-based Colorization • Old Photo Restoration</p>
-            <p style="margin-top: 10px; font-size: 0.85em;">
-                Based on research from He et al. (2018) and Wan et al. (2020)
-            </p>
-        </footer>
+  <footer class="site-foot">
+    <div class="wrap foot-grid">
+      <a class="brand" href="#top"><svg aria-hidden="true"><use href="#mark"/></svg>PhotoRevive</a>
+      <div class="foot-copy">
+        <p>Repair is based on <a href="https://github.com/microsoft/Bringing-Old-Photos-Back-to-Life" target="_blank" rel="noopener">Bringing Old Photos Back to Life</a> (Wan et al., 2020). Color is based on <a href="https://github.com/msracver/Deep-Exemplar-based-Colorization" target="_blank" rel="noopener">Deep Exemplar-based Colorization</a> (He et al., 2018). Runs on PyTorch.</p>
+        <p>Example photos from the Joseph Janney Steinmetz Collection, State Archives of Florida, and Jon Tyson, via Unsplash.</p>
+      </div>
     </div>
+  </footer>
 
-    <script>
-        let oldPhotoFile = null;
-        let referenceFile = null;
-        let resultsData = null;
+  <dialog class="viewer" id="viewer" aria-labelledby="viewerTitle">
+    <img id="viewerImg" alt="">
+    <div class="viewer-bar">
+      <p class="viewer-title" id="viewerTitle"></p>
+      <div class="viewer-actions">
+        <a class="btn btn-gilt btn-sm" id="viewerDownload" download>Download</a>
+        <form method="dialog"><button class="btn btn-ghost btn-sm" type="submit">Close</button></form>
+      </div>
+    </div>
+  </dialog>
 
-        // File input handlers
-        document.getElementById('oldPhotoInput').addEventListener('change', function(e) {
-            handleFileSelect(e, 'old');
-        });
+  <div class="toasts" id="toasts"></div>
 
-        document.getElementById('referenceInput').addEventListener('change', function(e) {
-            handleFileSelect(e, 'reference');
-        });
+  <script>
+  (() => {
+    'use strict';
 
-        function handleFileSelect(event, type) {
-            const file = event.target.files[0];
-            if (!file) return;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const $ = (sel, root = document) => root.querySelector(sel);
+    const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
+    const state = { busy: false, results: null };
+    const LABELS = { original: 'Original', restored: 'Restored', reference: 'Reference', colorized: 'Colorized' };
 
-            if (type === 'old') {
-                oldPhotoFile = file;
-                document.getElementById('oldPhotoName').textContent = file.name;
-                
-                // Add visual feedback
-                const uploadBox = document.getElementById('oldPhotoInput').closest('.upload-box');
-                uploadBox.classList.add('has-file');
-                
-                // Show preview
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const preview = document.getElementById('oldPhotoPreview');
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            } else {
-                referenceFile = file;
-                document.getElementById('referenceName').textContent = file.name;
-                
-                // Add visual feedback
-                const uploadBox = document.getElementById('referenceInput').closest('.upload-box');
-                uploadBox.classList.add('has-file');
-                
-                // Show preview
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const preview = document.getElementById('referencePreview');
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            }
+    /* ---------- Toasts ---------- */
+    const toastRoot = $('#toasts');
+    function toast(message, kind = 'error') {
+      const el = document.createElement('div');
+      el.className = `toast toast-${kind}`;
+      el.setAttribute('role', kind === 'error' ? 'alert' : 'status');
+      el.innerHTML = '<p></p><button type="button" aria-label="Dismiss"><svg aria-hidden="true"><use href="#x"/></svg></button>';
+      $('p', el).textContent = message;
+      $('button', el).addEventListener('click', () => el.remove());
+      toastRoot.append(el);
+      if (kind !== 'error') setTimeout(() => el.remove(), 4500);
+    }
 
-            // Enable process button if both files are selected
-            if (oldPhotoFile && referenceFile) {
-                document.getElementById('processBtn').disabled = false;
-            }
+    /* ---------- Before / after slider ---------- */
+    function makeCompare(root) {
+      const range = $('.cmp-range', root);
+      const listeners = [];
+      let dragging = false;
+      let moved = false;
+
+      const set = (p) => {
+        const v = Math.max(0, Math.min(100, p));
+        root.style.setProperty('--pos', v + '%');
+        range.value = String(Math.round(v));
+      };
+      const pct = (e) => {
+        const r = root.getBoundingClientRect();
+        return ((e.clientX - r.left) / r.width) * 100;
+      };
+      const notify = () => listeners.forEach((fn) => fn());
+
+      root.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'mouse' && e.button !== 0) return;
+        dragging = true;
+        moved = false;
+        root.setPointerCapture(e.pointerId);
+        root.classList.add('is-dragging');
+        notify();
+        if (e.pointerType === 'mouse') set(pct(e));
+      });
+      root.addEventListener('pointermove', (e) => {
+        if (!dragging) return;
+        moved = true;
+        set(pct(e));
+      });
+      const end = (e) => {
+        if (!dragging) return;
+        if (e.type === 'pointerup' && !moved && e.pointerType !== 'mouse') set(pct(e));
+        dragging = false;
+        root.classList.remove('is-dragging');
+      };
+      root.addEventListener('pointerup', end);
+      root.addEventListener('pointercancel', end);
+      range.addEventListener('input', () => { notify(); set(+range.value); });
+
+      return { set, onInteract: (fn) => listeners.push(fn) };
+    }
+
+    function sweep(cmp, from, to, duration, delay) {
+      let raf = 0;
+      let start = null;
+      const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+      const frame = (now) => {
+        if (start === null) start = now;
+        const t = Math.min(1, (now - start) / duration);
+        cmp.set(from + (to - from) * ease(t));
+        if (t < 1) raf = requestAnimationFrame(frame);
+      };
+      const timer = setTimeout(() => { raf = requestAnimationFrame(frame); }, delay);
+      return () => { clearTimeout(timer); cancelAnimationFrame(raf); };
+    }
+
+    // Hero: the print starts "as found", then develops into color once.
+    const heroCmp = makeCompare($('#heroCompare'));
+    const heroImg = $('#heroCompare .cmp-after img');
+    let cancelSweep = null;
+    heroCmp.onInteract(() => { if (cancelSweep) cancelSweep(); });
+    if (reduceMotion) {
+      heroCmp.set(50);
+    } else {
+      heroCmp.set(100);
+      const go = () => { cancelSweep = sweep(heroCmp, 100, 48, 1900, 450); };
+      if (heroImg.complete && heroImg.naturalWidth) go();
+      else {
+        heroImg.addEventListener('load', go, { once: true });
+        heroImg.addEventListener('error', () => heroCmp.set(50), { once: true });
+      }
+    }
+
+    /* ---------- Upload slots ---------- */
+    const processBtn = $('#processBtn');
+    const btnLabel = $('.btn-label', processBtn);
+    const hint = $('#actionHint');
+    const hasFiles = (e) => !!e.dataTransfer && [...e.dataTransfer.types].includes('Files');
+    const slots = {};
+
+    $$('.slot').forEach((el) => {
+      const s = {
+        key: el.dataset.slot,
+        el,
+        input: $('input[type=file]', el),
+        mount: $('.mount', el),
+        img: $('.mount-img', el),
+        meta: $('.slot-meta', el),
+        name: $('.meta-name', el),
+        dims: $('.meta-dims', el),
+        file: null,
+        url: null,
+      };
+      slots[s.key] = s;
+
+      s.input.addEventListener('change', () => {
+        const f = s.input.files && s.input.files[0];
+        if (f) setFile(s, f);
+        s.input.value = '';
+      });
+      s.mount.addEventListener('click', (e) => {
+        if (state.busy || e.target.closest('button')) return;
+        s.input.click();
+      });
+      $$('[data-browse]', el).forEach((b) => b.addEventListener('click', () => { if (!state.busy) s.input.click(); }));
+      $('[data-remove]', el).addEventListener('click', () => clearFile(s));
+
+      el.addEventListener('dragover', (e) => {
+        if (!hasFiles(e)) return;
+        e.preventDefault();
+        e.dataTransfer.dropEffect = state.busy ? 'none' : 'copy';
+        if (!state.busy) el.classList.add('is-drag');
+      });
+      el.addEventListener('dragleave', (e) => {
+        if (!el.contains(e.relatedTarget)) el.classList.remove('is-drag');
+      });
+      el.addEventListener('drop', (e) => {
+        e.preventDefault();
+        el.classList.remove('is-drag');
+        if (state.busy) return;
+        const f = e.dataTransfer.files && e.dataTransfer.files[0];
+        if (f) setFile(s, f);
+      });
+    });
+
+    // Stop the browser from opening files dropped outside a slot.
+    window.addEventListener('dragover', (e) => { if (hasFiles(e)) e.preventDefault(); });
+    window.addEventListener('drop', (e) => { if (hasFiles(e)) e.preventDefault(); });
+
+    const formatBytes = (n) => (n < 1024 * 1024 ? `${Math.max(1, Math.round(n / 1024))} KB` : `${(n / 1024 / 1024).toFixed(1)} MB`);
+
+    function setFile(s, file) {
+      if (!file.type || !file.type.startsWith('image/')) {
+        toast(`"${file.name}" isn't an image. Use a JPG, PNG or WebP file.`);
+        return;
+      }
+      if (s.url) URL.revokeObjectURL(s.url);
+      s.file = file;
+      s.url = URL.createObjectURL(file);
+      const size = formatBytes(file.size);
+      s.img.onload = () => { s.dims.textContent = `${s.img.naturalWidth} × ${s.img.naturalHeight}, ${size}`; };
+      s.img.onerror = () => { s.dims.textContent = `${size}, no preview`; };
+      s.img.alt = s.key === 'old' ? 'Damaged photo preview' : 'Color reference preview';
+      s.img.src = s.url;
+      s.img.hidden = false;
+      s.name.textContent = file.name || 'Pasted image';
+      s.name.title = file.name || '';
+      s.dims.textContent = size;
+      s.meta.hidden = false;
+      s.el.classList.add('has-file');
+      updateReady();
+    }
+
+    function clearFile(s) {
+      if (state.busy) return;
+      if (s.url) URL.revokeObjectURL(s.url);
+      s.file = null;
+      s.url = null;
+      s.img.removeAttribute('src');
+      s.img.hidden = true;
+      s.meta.hidden = true;
+      s.el.classList.remove('has-file');
+      updateReady();
+    }
+
+    document.addEventListener('paste', (e) => {
+      if (state.busy || !e.clipboardData) return;
+      const item = [...e.clipboardData.items].find((i) => i.kind === 'file' && i.type.startsWith('image/'));
+      if (!item) return;
+      const target = !slots.old.file ? slots.old : !slots.ref.file ? slots.ref : null;
+      if (!target) {
+        toast('Both slots already have an image. Remove one, then paste again.', 'info');
+        return;
+      }
+      e.preventDefault();
+      const f = item.getAsFile();
+      if (f) {
+        setFile(target, f);
+        toast(`Pasted into ${target.key === 'old' ? 'Damaged photo' : 'Color reference'}.`, 'info');
+      }
+    });
+
+    function updateReady() {
+      if (state.busy) return;
+      const a = !!slots.old.file;
+      const b = !!slots.ref.file;
+      processBtn.disabled = !(a && b);
+      hint.textContent = a && b
+        ? 'Both images are in. Processing can take a minute or so.'
+        : a ? 'Now add a color reference.'
+        : b ? 'Now add the damaged photo.'
+        : 'Add both images to continue.';
+    }
+
+    /* ---------- Processing ---------- */
+    let ticker = null;
+    function setBusy(on) {
+      state.busy = on;
+      processBtn.classList.toggle('is-busy', on);
+      processBtn.setAttribute('aria-disabled', String(on));
+      slots.old.el.classList.toggle('is-scanning', on);
+      $$('.slot button').forEach((b) => { b.disabled = on; });
+      if (on) {
+        const t0 = Date.now();
+        const tick = () => {
+          const s = Math.floor((Date.now() - t0) / 1000);
+          btnLabel.textContent = `Working… ${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+        };
+        tick();
+        ticker = setInterval(tick, 1000);
+        hint.textContent = 'Repairing and colorizing on the server. Keep this tab open.';
+      } else {
+        clearInterval(ticker);
+        btnLabel.textContent = 'Restore and colorize';
+        updateReady();
+      }
+    }
+
+    processBtn.addEventListener('click', async () => {
+      if (state.busy) return;
+      if (!slots.old.file || !slots.ref.file) {
+        toast('Add both a damaged photo and a color reference first.');
+        return;
+      }
+      setBusy(true);
+
+      const formData = new FormData();
+      formData.append('old_photo', slots.old.file);
+      formData.append('reference', slots.ref.file);
+
+      let response;
+      try {
+        response = await fetch('/process', { method: 'POST', body: formData });
+      } catch (err) {
+        setBusy(false);
+        toast(`Couldn't reach the server (${err.message}). Make sure the Flask app is running, then try again.`);
+        return;
+      }
+
+      let data = null;
+      try { data = await response.json(); } catch (_) { /* not JSON */ }
+      setBusy(false);
+
+      if (data && data.success) {
+        showResults(data);
+        toast('Restored and colorized.', 'info');
+      } else if (data) {
+        toast(`Restoration failed: ${data.error || 'the server gave no details'}. Check the server logs and try again.`);
+      } else {
+        const status = `${response.status}${response.statusText ? ' ' + response.statusText : ''}`;
+        toast(`The server answered ${status} without a result. Check the server logs and try again.`);
+      }
+    });
+
+    /* ---------- Results ---------- */
+    const resultsSection = $('#results');
+    const resultPrint = $('#resultPrint');
+    const resultCmpEl = $('#resultCompare');
+    const resultCmp = makeCompare(resultCmpEl);
+    const beforeImg = $('.cmp-before img', resultCmpEl);
+    const afterImg = $('.cmp-after img', resultCmpEl);
+    const beforeTag = $('.cmp-before .cmp-tag', resultCmpEl);
+    const afterTag = $('.cmp-after .cmp-tag', resultCmpEl);
+    const MODES = {
+      'original-colorized': ['original', 'colorized'],
+      'restored-colorized': ['restored', 'colorized'],
+      'original-restored': ['original', 'restored'],
+    };
+
+    afterImg.addEventListener('load', () => {
+      const ar = afterImg.naturalWidth / afterImg.naturalHeight;
+      if (ar) resultPrint.style.setProperty('--ar', ar.toFixed(4));
+    });
+
+    function setMode(mode) {
+      const d = state.results;
+      if (!d) return;
+      const [b, a] = MODES[mode];
+      beforeImg.src = d[b];
+      afterImg.src = d[a];
+      beforeImg.alt = `${LABELS[b]} image`;
+      afterImg.alt = `${LABELS[a]} image`;
+      beforeTag.textContent = LABELS[b];
+      afterTag.textContent = LABELS[a];
+      $('.cmp-range', resultCmpEl).setAttribute('aria-label', `Compare ${LABELS[b].toLowerCase()} and ${LABELS[a].toLowerCase()}`);
+      $$('#modeSwitch button').forEach((btn) => btn.setAttribute('aria-pressed', String(btn.dataset.mode === mode)));
+      resultCmp.set(50);
+    }
+    $$('#modeSwitch button').forEach((btn) => btn.addEventListener('click', () => setMode(btn.dataset.mode)));
+
+    function showResults(data) {
+      state.results = data;
+      $$('.stage-btn').forEach((btn) => {
+        const img = $('img', btn);
+        img.src = data[btn.dataset.stage];
+        img.alt = `${LABELS[btn.dataset.stage]} image`;
+      });
+      setMode('original-colorized');
+      resultsSection.hidden = false;
+      requestAnimationFrame(() => {
+        resultsSection.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+        $('#resultsTitle').focus({ preventScroll: true });
+      });
+    }
+
+    // Full-size viewer
+    const viewer = $('#viewer');
+    $$('.stage-btn').forEach((btn) => btn.addEventListener('click', () => {
+      const d = state.results;
+      if (!d) return;
+      const key = btn.dataset.stage;
+      const img = $('#viewerImg');
+      img.src = d[key];
+      img.alt = `${LABELS[key]} image, full size`;
+      $('#viewerTitle').textContent = LABELS[key];
+      const dl = $('#viewerDownload');
+      dl.href = d[key];
+      dl.download = `${key}_output.png`;
+      viewer.showModal();
+    }));
+    viewer.addEventListener('click', (e) => { if (e.target === viewer) viewer.close(); });
+
+    // Downloads
+    function downloadImage(type) {
+      const d = state.results;
+      if (!d) return;
+      const link = document.createElement('a');
+      link.href = d[type];
+      link.download = `${type}_output.png`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }
+    $('#dlColorized').addEventListener('click', () => downloadImage('colorized'));
+    $('#dlRestored').addEventListener('click', () => downloadImage('restored'));
+
+    $('#resetBtn').addEventListener('click', () => {
+      clearFile(slots.old);
+      clearFile(slots.ref);
+      state.results = null;
+      resultsSection.hidden = true;
+      $('#studio').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
+    });
+
+    /* ---------- Server health ---------- */
+    (async () => {
+      const pill = $('#serverStatus');
+      const text = $('.status-text', pill);
+      const note = $('#serverNote');
+      const set = (s, label, title) => { pill.dataset.state = s; text.textContent = label; pill.title = title; };
+      try {
+        const res = await fetch('/health', { cache: 'no-store' });
+        const d = await res.json();
+        if (d.status === 'ok' && d.models_loaded) {
+          set('ready', 'Models ready', 'The server is up and the models are loaded.');
+        } else {
+          set('warn', 'Models loading', 'The server is up, but the models are not fully loaded.');
+          note.textContent = "The server says its models aren't fully loaded yet. Check the server logs before processing.";
+          note.hidden = false;
         }
+      } catch (_) {
+        set('down', 'Server offline', 'Could not reach /health.');
+        note.textContent = "Can't reach the server. Start the Flask app on port 5000, then reload this page.";
+        note.hidden = false;
+      }
+    })();
 
-        // Process button handler
-        document.getElementById('processBtn').addEventListener('click', async function() {
-            if (!oldPhotoFile || !referenceFile) {
-                showError('Please select both an old photo and a reference image.');
-                return;
-            }
-
-            // Hide previous results and messages
-            hideMessages();
-            document.getElementById('resultsSection').style.display = 'none';
-
-            // Show loading
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('processBtn').disabled = true;
-
-            // Create form data
-            const formData = new FormData();
-            formData.append('old_photo', oldPhotoFile);
-            formData.append('reference', referenceFile);
-
-            try {
-                // Send request to server
-                const response = await fetch('/process', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const data = await response.json();
-
-                // Hide loading
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('processBtn').disabled = false;
-
-                if (data.success) {
-                    // Display results
-                    resultsData = data;
-                    displayResults(data);
-                    showSuccess('Processing complete! Your images are ready.');
-                } else {
-                    showError('Error: ' + (data.error || 'Unknown error occurred'));
-                }
-            } catch (error) {
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('processBtn').disabled = false;
-                showError('Network error: ' + error.message);
-                console.error('Error:', error);
-            }
-        });
-
-        function displayResults(data) {
-            document.getElementById('resultOriginal').src = data.original;
-            document.getElementById('resultRestored').src = data.restored;
-            document.getElementById('resultReference').src = data.reference;
-            document.getElementById('resultColorized').src = data.colorized;
-            
-            document.getElementById('resultsSection').style.display = 'block';
-            
-            // Smooth scroll to results
-            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function downloadImage(type) {
-            if (!resultsData) return;
-
-            let imageData, filename;
-            
-            if (type === 'colorized') {
-                imageData = resultsData.colorized;
-                filename = 'colorized_output.png';
-            } else if (type === 'restored') {
-                imageData = resultsData.restored;
-                filename = 'restored_output.png';
-            }
-
-            // Convert base64 to blob and download
-            const link = document.createElement('a');
-            link.href = imageData;
-            link.download = filename;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        function showError(message) {
-            const errorDiv = document.getElementById('errorMessage');
-            errorDiv.textContent = '❌ ' + message;
-            errorDiv.style.display = 'block';
-            setTimeout(() => {
-                errorDiv.style.display = 'none';
-            }, 5000);
-        }
-
-        function showSuccess(message) {
-            const successDiv = document.getElementById('successMessage');
-            successDiv.textContent = '✅ ' + message;
-            successDiv.style.display = 'block';
-            setTimeout(() => {
-                successDiv.style.display = 'none';
-            }, 5000);
-        }
-
-        function hideMessages() {
-            document.getElementById('errorMessage').style.display = 'none';
-            document.getElementById('successMessage').style.display = 'none';
-        }
-
-        // Check server health on load
-        window.addEventListener('load', async function() {
-            try {
-                const response = await fetch('/health');
-                const data = await response.json();
-                if (data.status === 'ok' && data.models_loaded) {
-                    console.log('✓ Server is ready');
-                } else {
-                    showError('Warning: Models may not be fully loaded. Please check server logs.');
-                }
-            } catch (error) {
-                showError('Cannot connect to server. Please ensure the Flask server is running on port 5000.');
-            }
-        });
-    </script>
+    updateReady();
+  })();
+  </script>
 </body>
 </html>
