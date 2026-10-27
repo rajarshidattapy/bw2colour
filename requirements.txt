@@ -15,6 +15,7 @@ scipy>=1.7.0
 # Web Framework (for app.py)
 Flask>=2.0.0
 flask-cors>=3.0.10
+huggingface-hub>=0.23.0
 
 # Training & Visualization
 matplotlib>=3.4.0
