@@ -5,6 +5,7 @@ The model downloads from Hugging Face on its first use; no training is required.
 
 import base64
 import io
+import os
 import sys
 from pathlib import Path
 from threading import Lock
@@ -111,7 +112,9 @@ def file_too_large(_error):
 
 
 if __name__ == "__main__":
-    print("DDColor PhotoRevive demo: http://localhost:5000")
+    host = os.environ.get("HOST", "127.0.0.1")
+    port = int(os.environ.get("PORT", "5000"))
+    print(f"DDColor PhotoRevive demo: http://{host}:{port}")
     # Load before accepting requests so the browser can accurately show ready state.
     load_model()
-    app.run(host="127.0.0.1", port=5000, debug=False)
+    app.run(host=host, port=port, debug=False)
